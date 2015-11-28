@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * GKislin
@@ -27,7 +28,7 @@ public class UserMealsUtil {
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
         );
-        getFilteredMealsWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+        System.out.println(getFilteredMealsWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
 //        .toLocalDate();
 //        .toLocalTime();
     }
@@ -48,11 +49,10 @@ public class UserMealsUtil {
                 .collect(Collectors.groupingBy(userMeal -> userMeal.getDateTime().toLocalDate()));
 
         for (Map.Entry<LocalDate, List<UserMeal>> pair : map.entrySet()) {
-            List<UserMeal> subList = pair.getValue();
-            Integer sumCalories = subList.stream().mapToInt(UserMeal::getCalories).sum();
+            Stream<UserMeal> stream = pair.getValue().stream();
+            Integer sumCalories = stream.mapToInt(UserMeal::getCalories).sum();
             list
-                    .addAll(subList
-                            .stream()
+                    .addAll(stream
                             .map(userMeal ->
                                     new UserMealWithExceed(userMeal.getDateTime(),
                                             userMeal.getDescription(),
