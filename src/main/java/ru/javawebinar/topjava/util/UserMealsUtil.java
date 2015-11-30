@@ -32,13 +32,12 @@ public class UserMealsUtil {
     }
 
     /**
-     * Возращает список записей согласно заданному интервалу времени
-     *
-     * @param mealList       список записей еды
-     * @param startTime      начало временного интервала
-     * @param endTime        конец временного интервала
-     * @param caloriesPerDay дневная норма каллорий
-     * @return список записей
+     * return a list of meals with exceed between the start-time and the end-time
+     * @param mealList list of meals
+     * @param startTime start time
+     * @param endTime  end time
+     * @param caloriesPerDay daily calories
+     * @return list of recording of meals with exceed
      */
     public static List<UserMealWithExceed> getFilteredMealsWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> totalByDept
@@ -48,12 +47,12 @@ public class UserMealsUtil {
 
         return   mealList
                 .stream()
+                .filter(userMealWithExceed -> TimeUtil.isBetween(userMealWithExceed.getDateTime().toLocalTime(), startTime, endTime))
                 .map(userMeal1 ->
                         new UserMealWithExceed(userMeal1.getDateTime(),
                                 userMeal1.getDescription(),
                                 userMeal1.getCalories(),
                                 totalByDept.get(userMeal1.getDateTime().toLocalDate()) > caloriesPerDay))
-                .filter(userMealWithExceed -> TimeUtil.isBetween(userMealWithExceed.getDateTime().toLocalTime(), startTime, endTime))
                 .collect(Collectors.toList());
 
 
